@@ -1,8 +1,9 @@
 import pytest
+from datetime import datetime,timedelta
 from passlib.context import CryptContext
 from fastapi.exceptions import HTTPException
 from app.schemas.user import User
-
+from app.use_cases.user import UserUseCases
 from app.db.models import User as UserModel
 from app.use_cases.user import UserUseCases
 
@@ -23,12 +24,8 @@ def test_register_user(db_session):
     db_session.commit()
     
     
-def test_register_user_already_exists(db_session):
-    user=UserModel(username="Matheus",password=crypy_context.hash("pass#"))
-    
+def test_register_user_already_exists(db_session,user_on_db):
 
-    db_session.add(user)
-    db_session.commit()
     db = UserUseCases(db_session)
     user2 =User(username="Matheus",password=crypy_context.hash("12345"))
 
@@ -36,5 +33,47 @@ def test_register_user_already_exists(db_session):
         db.register_user(user2)
 
 
-    db_session.delete(user)
-    db_session.commit()
+
+
+def test_user_login(db_session,user_on_db):
+
+
+    uc=UserUseCases(db_session=db_session)
+    user=User(
+        username="Matheus",
+        password="pass#"
+    )
+
+    token_data = uc.user_login(user=user,expire_in=30)
+
+    assert token_data.expire_at < datetime.now() + timedelta(31)
+
+
+def test_user_login_invalid(db_session,user_on_db):
+
+
+    uc = UserUseCases(db_session=db_session)
+    user=User(
+        username="Invalid",
+        password="pass#"
+    )
+
+    with pytest.raises(HTTPException):
+        uc.user_login(user=user,expire_in=30)
+
+
+
+
+def test_user_login_password_invalid(db_session,user_on_db):
+ 
+    uc = UserUseCases(db_session=db_session)
+
+    user=User(
+        username="Matheus",
+        password="Invalid"
+    )
+
+    with pytest.raises(HTTPException):
+        uc.user_login(user=user,expire_in=30)
+
+

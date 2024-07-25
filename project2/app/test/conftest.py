@@ -1,7 +1,11 @@
-import pytest   
+import pytest  
+from passlib.context import CryptContext 
+from app.db.models import User as UserModel
 from app.db.connection import Session
 from app.db.models import Category as CategoryModels
 from app.db.models import Products as ProductModels
+
+crypt_context=CryptContext("sha256_crypt")
 
 @pytest.fixture()
 def db_session():
@@ -87,3 +91,17 @@ def products_on_db(db_session):
 
     db_session.delete(category)
     db_session.commit()
+
+@pytest.fixture()
+def user_on_db(db_session):
+    user_on_db=UserModel(username="Matheus",password=crypt_context.hash("pass#"))
+    db_session.add(user_on_db)
+    db_session.commit()
+    db_session.refresh(user_on_db)
+    
+    yield user_on_db
+
+    db_session.delete(user_on_db)
+    db_session.commit()
+
+

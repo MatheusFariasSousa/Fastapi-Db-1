@@ -12,4 +12,7 @@ class User(CustomBaseModel):
             raise ValueError("This username is invalid")
         return value
     
+class UserOutput(User):
+    id:int
+    
 
