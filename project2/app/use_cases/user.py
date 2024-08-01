@@ -10,7 +10,7 @@ from passlib.context import CryptContext
 from sqlalchemy.exc import IntegrityError
 
 cryp_context=CryptContext(schemes=["sha256_crypt"])
-SECRET_KEY="1234567"
+SECRET_KEY="5178fc5037fea93a378885bef2b08076fd20e737ad75077e03949494c02520df"
 ALGORITHM="HS256"
 
 
@@ -53,6 +53,17 @@ class UserUseCases:
         token_data= TokenData(acess_token=acess_token,expire_at=expire_at)
 
         return token_data
+    
+    def verify_token(self,token:str):
+        try:
+            data = jwt.decode(token,SECRET_KEY,algorithms=ALGORITHM)
+        except JWTError:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="invalid token")
+        
+        user_on_db = self._get_user(username=data["sub"])
+        if user_on_db is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="invalid token")
+
 
 
     def _get_user(self,username:str):

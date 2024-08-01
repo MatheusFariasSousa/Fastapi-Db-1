@@ -1,9 +1,10 @@
 import pytest
-from datetime import datetime,timedelta
+from jose import jwt
+from datetime import datetime,timezone,timedelta,UTC
 from passlib.context import CryptContext
 from fastapi.exceptions import HTTPException
 from app.schemas.user import User
-from app.use_cases.user import UserUseCases
+from app.use_cases.user import UserUseCases,SECRET_KEY,ALGORITHM
 from app.db.models import User as UserModel
 from app.use_cases.user import UserUseCases
 
@@ -75,5 +76,32 @@ def test_user_login_password_invalid(db_session,user_on_db):
 
     with pytest.raises(HTTPException):
         uc.user_login(user=user,expire_in=30)
+
+def test_verify_token(db_session,user_on_db):
+    uc = UserUseCases(db_session=db_session)
+
+    data = {
+        "sub": user_on_db.username,
+        "exp":datetime.now(UTC) + timedelta(minutes=30)        
+    }
+
+    access_token = jwt.encode(data,SECRET_KEY,algorithm=ALGORITHM)
+
+    uc.verify_token(token=access_token)
+    
+def test_verify_token_expire(db_session,user_on_db):
+    uc = UserUseCases(db_session=db_session)
+
+    data = {
+        "sub": user_on_db.username,
+        "exp":datetime.now(UTC) - timedelta(minutes=30)        
+    }
+
+    access_token = jwt.encode(data,SECRET_KEY,algorithm=ALGORITHM)
+
+    with pytest.raises(HTTPException):
+
+        uc.verify_token(token=access_token)
+    
 
 
