@@ -15,7 +15,7 @@ def test_post_user(db_session):
     
     user={"username":"Matheus","password":"1234"}
     
-    response = client.post("/user/post",json=user)
+    response = client.post("/user/register",json=user)
 
     
 
@@ -33,7 +33,7 @@ def test_post_user_already_exists(db_session):
     db_session.refresh(user_on_db)
 
     user={"username":"Matheus","password":"12345"}
-    response = client.post("/user/post",json=user)
+    response = client.post("/user/register",json=user)
 
     assert response.status_code==status.HTTP_400_BAD_REQUEST
 
@@ -47,7 +47,7 @@ def test_user_login_route(user_on_db):
         "password":"pass#"
     }
 
-    headers = {"Contex-Type":"application/x-www-form-urlencoded"}
+    headers = {"Content-Type":"application/x-www-form-urlencoded"}
 
     response = client.post("/user/login",data=body,headers=headers)    
 
@@ -66,7 +66,7 @@ def test_user_login_route_invalid_username(user_on_db):
         "password":"pass#"
     }
 
-    headers = {"Contex-Type":"application/x-www-form-urlencoded"}
+    headers = {"Content-Type":"application/x-www-form-urlencoded"}
 
     response = client.post("/user/login",data=body,headers=headers)    
 
@@ -80,7 +80,7 @@ def test_user_login_route_invalid_password(user_on_db):
         "password":"pass#1"
     }
 
-    headers = {"Contex-Type":"application/x-www-form-urlencoded"}
+    headers = {"Content-Type":"application/x-www-form-urlencoded"}
 
     response = client.post("/user/login",data=body,headers=headers)    
 

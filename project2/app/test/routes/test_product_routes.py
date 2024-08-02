@@ -7,6 +7,8 @@ from app.main import app
 client = TestClient(app)
 
 
+
+
 def test_add_product_route(db_session,categories_on_db):
     body={
         "category_slug": categories_on_db[0].slug,

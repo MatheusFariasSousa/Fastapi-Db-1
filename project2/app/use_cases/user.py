@@ -56,7 +56,7 @@ class UserUseCases:
     
     def verify_token(self,token:str):
         try:
-            data = jwt.decode(token,SECRET_KEY,algorithms=ALGORITHM)
+            data = jwt.decode(token,SECRET_KEY,algorithms=[ALGORITHM])
         except JWTError:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="invalid token")
         

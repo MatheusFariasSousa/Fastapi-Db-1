@@ -1,7 +1,7 @@
 from typing import List
 from app.schemas.product import ProductInput,Product,ProductOutput
 from app.use_cases.product import ProductUseCases
-from app.routes.deps import get_db_session
+from app.routes.deps import get_db_session,oauth
 from fastapi import APIRouter,Depends,status,Response
 from sqlalchemy.orm import Session
 

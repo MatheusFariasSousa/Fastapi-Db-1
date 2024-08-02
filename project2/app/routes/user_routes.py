@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 router=APIRouter(prefix="/user",tags=["User"])
 
-@router.post("/post",status_code=status.HTTP_201_CREATED)
+@router.post("/register",status_code=status.HTTP_201_CREATED)
 def add_user(user:User,session:Session = Depends(get_db_session)):
     uc=UserUseCases(db_session=session)
     uc.register_user(user=user)
@@ -18,8 +18,7 @@ def add_user(user:User,session:Session = Depends(get_db_session)):
     return status.HTTP_201_CREATED
 
 @router.post("/login")
-def user_login(login_request_form:OAuth2PasswordRequestForm=Depends(),
-               session:Session = Depends(get_db_session)):
+def user_login(login_request_form:OAuth2PasswordRequestForm=Depends(),session:Session = Depends(get_db_session)):
     uc = UserUseCases(db_session=session)
 
     user = User(

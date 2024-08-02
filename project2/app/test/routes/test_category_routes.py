@@ -6,6 +6,8 @@ from app.main import app
 client= TestClient(app)
 
 
+
+
 def test_add_category_route(db_session):
     body = {
         "name":"Roupa",

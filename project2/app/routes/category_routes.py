@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter,Depends,status,Response
 from sqlalchemy.orm import Session
 from app.schemas.category import Category,CategoryOutput
-from app.routes.deps import get_db_session
+from app.routes.deps import get_db_session,oauth
 from app.use_cases.category import CategoryUseCases
 
 router=APIRouter(prefix="/category", tags=["category"])
